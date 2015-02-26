@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 // Temporary
 #include <stdio.h>
@@ -90,8 +89,19 @@ void * list_remove(list *list, int pos)
     {
         current = current->next;
     }
-
-    return NULL;
+    list_node *removed = current->next;
+    current->next = removed->next;
+    if (pos == list->length - 1)
+    {
+        list->end = current;
+    }
+    if (pos == 0)
+    {
+        list->front = current;
+    }
+    void *data = removed->data;
+    free(removed);
+    return data;
 }
 
 void * list_get(list *list, int pos)
@@ -110,18 +120,4 @@ void * list_get(list *list, int pos)
 int list_length(list *list)
 {
     return list->length;
-}
-
-// Just so it compiles right now.
-int main()
-{
-    list list;
-    list_create(&list, sizeof(int), NULL);
-    for (int i = 0; i < 100; i++)
-    {
-        list_insert(&list, i, &i);
-    }
-    printf("%i\n", *(int*) list_get(&list, 1));
-    list_destroy(&list);
-    return 0;
 }
